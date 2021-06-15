@@ -14,5 +14,10 @@ Antes de ejecutar los siguientes comando verificar en el archivo .env.example lo
   
 
 ```bash
-composer install
+1 cp .env.example .env
+2 composer install
 ```
+
+
+## Acceso
+Los usuarios de la aplicación son generados de manera random, para hacer login es necesario ingresar a la base de datos y verificar un número de identificación la contraseña para cualquier usuario es 1234
