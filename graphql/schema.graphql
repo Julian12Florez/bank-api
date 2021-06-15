@@ -1,0 +1,70 @@
+"A date string with format `Y-m-d`, e.g. `2011-05-23`."
+scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
+
+"A datetime string with format `Y-m-d H:i:s`, e.g. `2018-05-23 13:43:32`."
+scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+
+type Query {
+    users: [User!]! @all @guard
+    user(id: ID @eq): User @find @guard
+    accounts: [Account!]! @all @guard
+    ClientAccounts(identity_number: Int) : [Account] @guard
+    AccountStatus(number: String) : [Account] @guard
+}
+
+
+type User {
+    id: ID!
+    name: String!
+    identity_number: Int!
+    password: String!
+    accounts: [Account!]! @hasMany
+    api_token: String!,
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+type Account {
+    id: ID!
+    number: String!
+    balance: Int!
+    user_id: Int!,
+    user: User! @belongsTo
+    movements: [Movement!]!  @hasMany(scopes: ["limitMovements"])
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+type Movement {
+    id: ID!
+    value: Int!
+    type_movement: Int!
+    account: Account! @belongsTo
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+
+type Mutation {
+    createUser(
+        name: String!,
+        identity_number:Int!,
+        password:Int! @hash
+    ): User! @create
+
+    login(
+        identity_number:Int!,
+        password:String
+    ): User!
+
+
+
+    createMovement(
+        origin_account: Int!,
+        destination_account: Int!,
+        value: Int!
+    ): Movement @validator @guard
+
+    logout(id: Int!): User @guard
+
+}
